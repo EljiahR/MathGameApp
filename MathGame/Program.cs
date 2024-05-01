@@ -1,4 +1,6 @@
-﻿bool playAgain = false;
+﻿using System.Diagnostics;
+
+bool playAgain = false;
 Random random = new();
 do
 {
@@ -8,8 +10,9 @@ do
     Console.WriteLine("2. Subtraction");
     Console.WriteLine("3. Multiplication");
     Console.WriteLine("4. Division");
+    Console.WriteLine("5. Random");
 
-    int gameMode = GetResponse(1, 4);
+    int gameMode = GetResponse(1, 5);
     Console.WriteLine("Choose your difficulty from 1-5");
     int difficulty = GetResponse(1, 5);
 
@@ -26,12 +29,15 @@ Console.ReadLine();
 
 void MathGame(int gameMode, int difficulty)
 {
+    Stopwatch watch = new Stopwatch();
     int score = 0;
     int min = 1;
     int max = (int)Math.Pow(10, difficulty);
+    int originalMode = gameMode;
+    watch.Start();
     for (int i = 0;  i < difficulty + 2; i++)
     {
-        
+        if(originalMode == 5)gameMode = random.Next(1,5);
         int num1 = random.Next(min, max);
         int num2 = random.Next(gameMode == 4 ? 2 : min, gameMode == 4 ? 10 : max);
         if ((gameMode == 2 || gameMode == 4) && num2 > num1) (num1, num2) = (num2, num1);
@@ -70,6 +76,7 @@ void MathGame(int gameMode, int difficulty)
         }
         else Console.WriteLine("Incorrect!");
     }
+    watch.Stop();
 
     Console.Write("Final Score");
     Thread.Sleep(1000);
@@ -78,7 +85,14 @@ void MathGame(int gameMode, int difficulty)
         Console.Write(".");
         Thread.Sleep(1000);  
     }
-    Console.Write($" {score}!\n");
+    int time = (int)watch.Elapsed.TotalSeconds;
+    int minutes = 0;
+    if (time >= 60)
+    {
+        minutes = time / 60;
+        time = time % 60;
+    }
+    Console.Write($" {score} in {(minutes > 0 ? minutes + " minutes " : "")}{time} seconds!\n");
 }
 
 int GetResponse(int min, int max)
